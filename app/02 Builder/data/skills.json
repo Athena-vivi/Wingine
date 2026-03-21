@@ -1,0 +1,379 @@
+[
+  {
+    "id": "flow-designer",
+    "layer": "capability",
+    "group": "core",
+    "input": {
+      "problem": "string",
+      "starting_assets": ["string"],
+      "desired_output": "string"
+    },
+    "process": [
+      "Map the problem into a start-to-finish path",
+      "Define the major stages required to reach output",
+      "Assign each stage a clear transformation",
+      "Check for gaps between stages",
+      "Return a usable workflow skeleton"
+    ],
+    "output": {
+      "workflow": [
+        {
+          "stage": "string",
+          "purpose": "string",
+          "input": "string",
+          "output": "string"
+        }
+      ],
+      "missing_capabilities": ["string"]
+    },
+    "trigger": "Use when workflow structuring is needed in Builder."
+  },
+  {
+    "id": "capability-mapper",
+    "layer": "capability",
+    "group": "core",
+    "input": {
+      "workflow": ["string"],
+      "system_assets": ["string"],
+      "target_output": "string"
+    },
+    "process": [
+      "Inspect each workflow stage",
+      "Determine the capability needed to execute that stage",
+      "Match with existing assets where possible",
+      "Mark missing capabilities that must be created",
+      "Return a capability inventory"
+    ],
+    "output": {
+      "capabilities": [
+        {
+          "name": "string",
+          "role": "string",
+          "status": "existing | missing | partial"
+        }
+      ],
+      "gaps": ["string"]
+    },
+    "trigger": "Use when Builder must translate workflow into reusable modules."
+  },
+  {
+    "id": "spec-writer",
+    "layer": "capability",
+    "group": "core",
+    "input": {
+      "problem": "string",
+      "user_need": "string",
+      "constraints": ["string"],
+      "target_scope": "MVP | feature | module"
+    },
+    "process": [
+      "Define the user problem clearly",
+      "Separate goals from non-goals",
+      "Describe required inputs, outputs, and success conditions",
+      "Outline core states, flows, and edge cases",
+      "Produce a structured implementation spec"
+    ],
+    "output": {
+      "spec": {
+        "goal": "string",
+        "scope": ["string"],
+        "non_goals": ["string"],
+        "requirements": ["string"],
+        "acceptance_criteria": ["string"]
+      }
+    },
+    "trigger": "Use when a clean implementation spec is needed before build."
+  },
+  {
+    "id": "review",
+    "layer": "capability",
+    "group": "core",
+    "input": {
+      "artifact": "project | feature | PR | architecture decision",
+      "focus": ["risk", "regression", "maintainability", "missing tests"]
+    },
+    "process": [
+      "Read the artifact and its intended behavior",
+      "Evaluate structural risks and possible regressions",
+      "Identify missing validations, weak abstractions, and unclear interfaces",
+      "Prioritize findings by impact",
+      "Produce a concise review report"
+    ],
+    "output": {
+      "review_status": "approved | needs-work",
+      "findings": [
+        {
+          "severity": "critical | major | minor",
+          "area": "string",
+          "finding": "string",
+          "fix_hint": "string"
+        }
+      ],
+      "residual_risk": "string"
+    },
+    "trigger": "Use when a critical review pass is needed."
+  },
+  {
+    "id": "debug",
+    "layer": "capability",
+    "group": "core",
+    "input": {
+      "observed_failure": "string",
+      "reproduction_steps": ["string"],
+      "evidence": ["logs", "errors", "traces"]
+    },
+    "process": [
+      "Reconstruct the failure path",
+      "Narrow the fault to one layer or component",
+      "Test likely root causes",
+      "Select the most probable cause",
+      "Return the fix path and verification steps"
+    ],
+    "output": {
+      "root_cause": "string",
+      "affected_area": "string",
+      "fix_path": ["string"],
+      "verification": ["string"]
+    },
+    "trigger": "Use when a broken behavior must be isolated and resolved."
+  },
+  {
+    "id": "design-review",
+    "layer": "capability",
+    "group": "core",
+    "input": {
+      "ui_artifact": "string",
+      "user_task": "string",
+      "expected_product_behavior": "string"
+    },
+    "process": [
+      "Inspect the interface against the user task",
+      "Identify hierarchy, spacing, and interaction issues",
+      "Mark unclear states and friction points",
+      "Prioritize fixes",
+      "Return a design review report"
+    ],
+    "output": {
+      "design_findings": ["string"],
+      "priority_fixes": ["string"],
+      "usability_risks": ["string"]
+    },
+    "trigger": "Use when a UI flow needs a structured design review."
+  },
+  {
+    "id": "qa-check",
+    "layer": "capability",
+    "group": "core",
+    "input": {
+      "artifact": "code | spec | prompt | workflow draft",
+      "scope": "changed area or target module",
+      "criteria": ["correctness", "clarity", "edge cases", "consistency"]
+    },
+    "process": [
+      "Identify the artifact under review",
+      "Check against explicit requirements or expected behavior",
+      "Detect bugs, contradictions, missing cases, and weak assumptions",
+      "Summarize findings by severity",
+      "Return actionable fixes or validation notes"
+    ],
+    "output": {
+      "status": "pass | issues-found",
+      "findings": [
+        {
+          "severity": "high | medium | low",
+          "issue": "string",
+          "recommendation": "string"
+        }
+      ],
+      "summary": "string"
+    },
+    "trigger": "Use when a quality gate is needed before shipping."
+  },
+  {
+    "id": "ship-readiness",
+    "layer": "capability",
+    "group": "core",
+    "input": {
+      "artifact": "feature | tool | page | plugin",
+      "requirements": ["string"],
+      "test_signals": ["string"]
+    },
+    "process": [
+      "Check whether the artifact satisfies MVP requirements",
+      "Verify major flows, failure points, and polish blockers",
+      "Separate must-fix issues from nice-to-have improvements",
+      "Assess readiness to ship",
+      "Return a ship decision"
+    ],
+    "output": {
+      "ship_status": "ready | almost-ready | blocked",
+      "must_fix": ["string"],
+      "nice_to_have": ["string"],
+      "release_note": "string"
+    },
+    "trigger": "Use when a final pre-release gate is needed."
+  },
+  {
+    "id": "document-release",
+    "layer": "capability",
+    "group": "core",
+    "input": {
+      "artifact_summary": "string",
+      "changes": ["string"],
+      "limits": ["string"],
+      "usage_notes": ["string"]
+    },
+    "process": [
+      "Collect release-relevant changes",
+      "Write summary, scope, and limits",
+      "Write usage or rollout notes",
+      "Format into a release-ready document",
+      "Return the release document"
+    ],
+    "output": {
+      "release_summary": "string",
+      "change_list": ["string"],
+      "usage_notes": ["string"],
+      "known_limitations": ["string"]
+    },
+    "trigger": "Use when the current output needs release-facing documentation."
+  },
+  {
+    "id": "design-consultation",
+    "layer": "capability",
+    "group": "secondary",
+    "input": {
+      "current_screen": "string",
+      "user_goal": "string",
+      "pain_points": ["string"]
+    },
+    "process": [
+      "Read the current screen or flow",
+      "Identify clarity, hierarchy, and interaction issues",
+      "Propose concrete layout and interaction fixes",
+      "Rank fixes by impact",
+      "Return a revised direction"
+    ],
+    "output": {
+      "design_issues": ["string"],
+      "recommended_changes": ["string"],
+      "priority_order": ["string"]
+    },
+    "trigger": "Use when a UI needs direct consultation rather than a formal review."
+  },
+  {
+    "id": "plan-design-review",
+    "layer": "capability",
+    "group": "secondary",
+    "input": {
+      "user_problem": "string",
+      "product_goal": "string",
+      "ui_scope": "string"
+    },
+    "process": [
+      "Clarify the primary user task",
+      "Reduce the task into key screens or regions",
+      "Define interaction order and content priority",
+      "Flag friction and ambiguity",
+      "Return a design planning outline"
+    ],
+    "output": {
+      "interaction_plan": ["string"],
+      "content_hierarchy": ["string"],
+      "ux_risks": ["string"]
+    },
+    "trigger": "Use when a product flow needs design planning before build."
+  },
+  {
+    "id": "plan-ceo-review",
+    "layer": "capability",
+    "group": "secondary",
+    "input": {
+      "problem": "string",
+      "business_context": "string",
+      "constraints": ["time", "focus", "capital"]
+    },
+    "process": [
+      "Frame the problem as a strategic decision",
+      "List viable paths",
+      "Compare paths by leverage, risk, speed, and focus cost",
+      "Choose the recommended path",
+      "State what should happen now, later, and not at all"
+    ],
+    "output": {
+      "decision_frame": "string",
+      "options": ["string"],
+      "recommended_path": "string"
+    },
+    "trigger": "Use when the workflow needs an executive decision lens."
+  },
+  {
+    "id": "plan-eng-review",
+    "layer": "capability",
+    "group": "secondary",
+    "input": {
+      "goal": "string",
+      "implementation_context": "string",
+      "dependencies": ["string"]
+    },
+    "process": [
+      "Break the goal into buildable units",
+      "Identify critical dependencies",
+      "Flag technical risks and unknowns",
+      "Define implementation order",
+      "Return a build-ready engineering plan"
+    ],
+    "output": {
+      "technical_plan": ["string"],
+      "dependencies": ["string"],
+      "risks": ["string"]
+    },
+    "trigger": "Use when a problem needs engineering planning support."
+  },
+  {
+    "id": "browse",
+    "layer": "capability",
+    "group": "secondary",
+    "input": {
+      "query": "string",
+      "source_type": "string",
+      "freshness_requirement": "string"
+    },
+    "process": [
+      "Search the target topic",
+      "Open the most relevant sources",
+      "Extract the needed facts or references",
+      "Compare sources if needed",
+      "Return a sourced result set"
+    ],
+    "output": {
+      "sources": ["string"],
+      "facts": ["string"],
+      "confidence": "string"
+    },
+    "trigger": "Use when the workflow depends on current or external information."
+  },
+  {
+    "id": "retro",
+    "layer": "capability",
+    "group": "secondary",
+    "input": {
+      "completed_cycle": "string",
+      "outcomes": ["string"],
+      "issues": ["string"]
+    },
+    "process": [
+      "Summarize what was planned and what happened",
+      "List wins, failures, and surprises",
+      "Identify root causes for misses",
+      "Extract process changes",
+      "Return a retro report"
+    ],
+    "output": {
+      "what_worked": ["string"],
+      "what_failed": ["string"],
+      "process_changes": ["string"]
+    },
+    "trigger": "Use after a cycle is complete and lessons should be captured."
+  }
+]

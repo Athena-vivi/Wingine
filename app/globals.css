@@ -1,485 +1,188 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  html,
-  body {
-    @apply text-text-primary font-sans antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow-x: hidden;
-  }
-
-  body {
-    min-height: 100vh;
-  }
-
-  main, h1, h2, h3, h4, h5, h6, div, span, p {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  /* 深海神庙背景 - 彻底删除栅格 */
-  .starsea-bg {
-    background: radial-gradient(ellipse at center, #0a0f1a 0%, #020617 50%, #000000 100%);
-    min-height: 100vh;
-    position: relative;
-  }
-
-  /* 噪声纹理层 - 物质感 - 加深 */
-  .starsea-bg::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0.08;
-    pointer-events: none;
-    z-index: 1;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  }
-
-  /* 书香气息背景 - 纯净琥珀色系 */
-  .bookish-bg {
-    background: radial-gradient(ellipse at center, #3d2a1a 0%, #2a1d12 50%, #1a120a 100%);
-    min-height: 100vh;
-    position: relative;
-  }
-
-  /* 书香纹理层 - 旧纸质感 */
-  .bookish-bg::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0.04;
-    pointer-events: none;
-    z-index: 1;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paperFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paperFilter)'/%3E%3C/svg%3E");
-  }
+:root {
+  color-scheme: light;
+  --bg: #f5f1e8;
+  --panel: rgba(255, 251, 243, 0.82);
+  --panel-strong: #fffdf8;
+  --border: rgba(130, 110, 84, 0.18);
+  --text: #2d241c;
+  --muted: #756555;
+  --accent: #a16d2b;
 }
 
-@layer components {
-  /* 深海玻璃卡片 - 辛金硬度 + 壬水流动 */
-  .metal-card {
-    @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-sm;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    /* 深空黑洞阴影 - 极深、大面积扩散 */
-    box-shadow:
-      /* 内部高光 - 玻璃顶部反射 */
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
-      /* 主阴影 - 深渊扩散 */
-      0 4px 36px -3px rgba(0, 0, 0, 0.6),
-      /* 外层光晕 - 空间深度 */
-      0 12px 80px -8px rgba(0, 0, 0, 0.4),
-      /* 环境光折射 - 蓝色微光 */
-      0 0 40px -10px rgba(74, 144, 226, 0.15);
-    transform-style: preserve-3d;
-  }
-
-  .metal-card:hover {
-    @apply bg-white/10;
-    /* 悬停时阴影增强 - 琥珀金温度 */
-    box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.12),
-      0 8px 48px -6px rgba(0, 0, 0, 0.75),
-      0 20px 100px -12px rgba(0, 0, 0, 0.5),
-      0 0 60px -15px rgba(212, 175, 55, 0.25),
-      /* 琥珀金环境光 */
-      0 0 80px -20px rgba(212, 175, 55, 0.15);
-    border-color: rgba(212, 175, 55, 0.4);
-    transform: translateY(-4px);
-  }
-
-  /* 3D 玻璃卡片 - 空间层级 + 环境光折射 */
-  .glass-3d {
-    position: relative;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  /* 左上玻璃厚度边框 - 银色到金色渐变 */
-  .glass-edge {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(248, 250, 252, 0.3) 15%,
-      rgba(248, 250, 252, 0.5) 50%,
-      rgba(248, 250, 252, 0.3) 85%,
-      transparent 100%
-    );
-    border-radius: 2px 2px 0 0;
-    pointer-events: none;
-    opacity: 0.7;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .glass-3d:hover .glass-edge {
-    opacity: 1;
-    height: 2px;
-    /* 银色到金黄色的渐变 */
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(248, 250, 252, 0.5) 10%,
-      rgba(212, 175, 55, 0.6) 30%,
-      rgba(212, 175, 55, 0.9) 50%,
-      rgba(212, 175, 55, 0.6) 70%,
-      rgba(248, 250, 252, 0.5) 90%,
-      transparent 100%
-    );
-    box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
-  }
-
-  /* 极简按钮 - 玻璃质感 */
-  .metal-button {
-    @apply px-4 py-2 bg-white/5 backdrop-blur-md border border-white/10 text-text-primary text-sm rounded-sm;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 12px -1px rgba(0, 0, 0, 0.15);
-  }
-
-  .metal-button:hover {
-    @apply bg-white/10 border-accent-blue/30;
-    box-shadow: 0 4px 20px -2px rgba(74, 144, 226, 0.2);
-    transform: translateY(-1px);
-  }
-
-  /* 晶格输入框 - 玻璃质感 */
-  .metal-input {
-    @apply bg-white/5 backdrop-blur-md border border-white/10 text-text-primary px-4 py-2 rounded-sm;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: inset 0 2px 8px -2px rgba(0, 0, 0, 0.2);
-  }
-
-  .metal-input:focus {
-    @apply bg-white/10 border-accent-blue/30 outline-none;
-    box-shadow: inset 0 2px 8px -2px rgba(0, 0, 0, 0.2),
-                0 0 0 3px rgba(74, 144, 226, 0.1);
-  }
+* {
+  box-sizing: border-box;
 }
 
-/* 深海蓝色光晕 - 缓慢飘动，深海俯瞰感 */
-@keyframes ocean-wave-1 {
-  0%, 100% {
-    transform: translate(0%, 0%) scale(1);
-  }
-  50% {
-    transform: translate(8%, -6%) scale(1.02);
-  }
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.95), transparent 30%),
+    linear-gradient(180deg, #f7f4ec 0%, #f0eadf 100%);
+  color: var(--text);
+  font-family: Georgia, "Times New Roman", serif;
 }
 
-@keyframes ocean-wave-2 {
-  0%, 100% {
-    transform: translate(0%, 0%) scale(1);
-  }
-  50% {
-    transform: translate(-12%, 8%) scale(1.03);
-  }
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
-@keyframes ocean-wave-3 {
-  0%, 100% {
-    transform: translate(0%, 0%) scale(1);
-  }
-  50% {
-    transform: translate(5%, 5%) scale(1.01);
-  }
+.console-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
 }
 
-.ocean-flow {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: -1;
-  opacity: 0.5;
+.console-nav {
+  border-right: 1px solid var(--border);
+  padding: 24px 18px;
+  background: rgba(255, 250, 242, 0.72);
 }
 
-.ocean-blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(150px);
-  animation-duration: 80s;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
+.console-main {
+  padding: 28px;
 }
 
-/* 深海蓝色光晕 - 边缘融入琥珀金 */
-.ocean-blob-1 {
-  width: 1200px;
-  height: 1200px;
-  background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, rgba(29, 78, 216, 0.08) 40%, rgba(212, 175, 55, 0.03) 70%, transparent 100%);
-  top: -400px;
-  left: -300px;
-  animation-name: ocean-wave-1;
+.nav-group {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
 }
 
-.ocean-blob-2 {
-  width: 1400px;
-  height: 1400px;
-  background: radial-gradient(circle, rgba(30, 58, 138, 0.12) 0%, rgba(37, 99, 235, 0.06) 50%, rgba(212, 175, 55, 0.02) 80%, transparent 100%);
-  bottom: -500px;
-  right: -400px;
-  animation-name: ocean-wave-2;
-  animation-delay: -40s;
+.nav-link {
+  display: block;
+  padding: 9px 10px;
+  border-radius: 10px;
+  color: var(--muted);
 }
 
-.ocean-blob-3 {
-  width: 1000px;
-  height: 1000px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, rgba(96, 165, 250, 0.05) 60%, transparent 100%);
-  top: 30%;
-  left: 30%;
-  transform: translate(-50%, -50%);
-  animation-name: ocean-wave-3;
-  animation-delay: -20s;
+.nav-link.active,
+.nav-link:hover {
+  background: rgba(161, 109, 43, 0.08);
+  color: var(--text);
 }
 
-/* 琥珀色光斑 - 阳光射入深海 */
-@keyframes amber-drift-1 {
-  0%, 100% {
-    transform: translate(0, 0) scale(1);
-    opacity: 0.08;
-  }
-  50% {
-    transform: translate(30px, -20px) scale(1.2);
-    opacity: 0.12;
-  }
+.page-stack {
+  display: grid;
+  gap: 18px;
 }
 
-@keyframes amber-drift-2 {
-  0%, 100% {
-    transform: translate(0, 0) scale(1);
-    opacity: 0.06;
-  }
-  50% {
-    transform: translate(-25px, 15px) scale(1.15);
-    opacity: 0.1;
-  }
+.hero {
+  display: grid;
+  gap: 8px;
 }
 
-.amber-glow {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: -1;
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
-.amber-spot {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  animation-duration: 40s;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
+.title {
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.1;
 }
 
-/* 右上角琥珀光斑 - 阳光 */
-.amber-spot-1 {
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(212, 175, 55, 0.12) 0%, rgba(244, 208, 63, 0.06) 40%, transparent 70%);
-  top: -200px;
-  right: -150px;
-  animation-name: amber-drift-1;
+.subtitle {
+  margin: 0;
+  color: var(--muted);
+  max-width: 760px;
+  line-height: 1.5;
 }
 
-/* 左下角琥珀光斑 - 温度 */
-.amber-spot-2 {
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, rgba(184, 150, 14, 0.04) 50%, transparent 70%);
-  bottom: -150px;
-  left: -100px;
-  animation-name: amber-drift-2;
-  animation-delay: -20s;
+.grid {
+  display: grid;
+  gap: 16px;
 }
 
-/* 中心琥珀光斑 - 神庙核心 */
-.amber-spot-3 {
-  width: 700px;
-  height: 700px;
-  background: radial-gradient(circle, rgba(212, 175, 55, 0.06) 0%, rgba(244, 208, 63, 0.03) 50%, transparent 70%);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  animation: amber-drift-1 60s ease-in-out infinite;
-  animation-delay: -30s;
+.grid.two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-/* 中心琥珀光斑 - 极微弱环境光 */
-.amber-spot-3 {
-  width: 700px;
-  height: 700px;
-  background: radial-gradient(circle, rgba(212, 175, 55, 0.02) 0%, rgba(244, 208, 63, 0.01) 50%, transparent 70%);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  animation: amber-drift-1 100s ease-in-out infinite;
-  animation-delay: -30s;
+.grid.four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
-/* 动态星空 - Astra Twinkle */
-@keyframes star-twinkle {
-  0%, 100% {
-    opacity: 0.2;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.2);
-  }
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px;
 }
 
-.starfield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: -1;
-  overflow: hidden;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.panel h2,
+.panel h3,
+.panel h4,
+.panel p {
+  margin-top: 0;
 }
 
-.star {
-  position: absolute;
-  background: white;
-  border-radius: 50%;
-  animation: star-twinkle 3s ease-in-out infinite;
+.stat {
+  display: grid;
+  gap: 4px;
 }
 
-/* 金属光泽扫描线动画 */
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
+.stat-value {
+  font-size: 28px;
+  line-height: 1;
 }
 
-.shimmer-effect {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(74, 144, 226, 0.1) 50%,
-    transparent 100%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 2s infinite;
+.muted {
+  color: var(--muted);
 }
 
-/* 滚动条美化 */
-::-webkit-scrollbar {
-  width: 6px;
+.list {
+  display: grid;
+  gap: 10px;
 }
 
-::-webkit-scrollbar-track {
-  background: #0A0A0B;
+.list-row {
+  display: grid;
+  gap: 4px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(130, 110, 84, 0.12);
 }
 
-::-webkit-scrollbar-thumb {
-  background: #2A2A2D;
-  border-radius: 3px;
+.list-row:first-child {
+  border-top: 0;
+  padding-top: 0;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #3A3A3D;
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-/* 琥珀色终端闪烁效果 - 老式 CRT 显示器质感 */
-@keyframes terminal-flicker {
-  0%, 100% {
-    opacity: 1;
-  }
-  92% {
-    opacity: 1;
-  }
-  93% {
-    opacity: 0.8;
-  }
-  94% {
-    opacity: 1;
-  }
-  96% {
-    opacity: 0.9;
-  }
-  97% {
-    opacity: 1;
-  }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  color: var(--muted);
 }
 
-.text-accent-gold {
-  animation: terminal-flicker 8s infinite;
+.contract-table {
+  display: grid;
+  gap: 10px;
 }
 
-/* 边框脉冲动画 - 琥珀色呼吸效果 */
-@keyframes border-pulse {
-  0%, 100% {
-    border-color: rgba(212, 175, 55, 0.2);
-    box-shadow: 0 0 0 rgba(212, 175, 55, 0);
-  }
-  50% {
-    border-color: rgba(212, 175, 55, 0.5);
-    box-shadow: inset 0 0 20px rgba(212, 175, 55, 0.1);
-  }
+.contract-row {
+  display: grid;
+  grid-template-columns: 180px 120px 120px minmax(0, 1fr);
+  gap: 14px;
+  padding: 12px 0;
+  border-top: 1px solid rgba(130, 110, 84, 0.12);
 }
 
-/* 绕边框转动的光点 - 运行中状态 */
-@keyframes orbit-perimeter {
-  0% {
-    top: 0;
-    left: 0;
-    right: auto;
-    bottom: auto;
-  }
-  25% {
-    top: 0;
-    left: auto;
-    right: 0;
-    bottom: auto;
-  }
-  50% {
-    top: auto;
-    left: auto;
-    right: 0;
-    bottom: 0;
-  }
-  75% {
-    top: auto;
-    left: 0;
-    right: auto;
-    bottom: 0;
-  }
-  100% {
-    top: 0;
-    left: 0;
-    right: auto;
-    bottom: auto;
-  }
+.contract-row:first-child {
+  border-top: 0;
+  padding-top: 0;
 }
