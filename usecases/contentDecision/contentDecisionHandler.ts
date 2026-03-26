@@ -16,6 +16,7 @@ import { buildRadarRecord } from "../../core/modules/radar/capabilities/radarRec
 import { resolveSourceInput } from "../../core/modules/radar/capabilities/sourceInputResolver.ts"
 import { resolveSourceMaterial } from "../../core/modules/radar/capabilities/sourceMaterialNormalizer.ts"
 import type { BetObject, ProblemObject, ScoreObject } from "../../core/modules/shared/index.ts"
+import type { RedditSourceDiagnostics } from "../../core/modules/radar/types/radar.ts"
 
 export type ContentDecisionHandlerInput = {
   source_url: string
@@ -61,12 +62,14 @@ export type ContentDecisionResult =
       reason: string
       confidence: number
       problem_summary: string
+      source_diagnostics?: RedditSourceDiagnostics
     }
   | {
       decision: "invest"
       reason: string
       confidence: number
       problem_summary: string
+      source_diagnostics?: RedditSourceDiagnostics
       content_asset: ContentAsset
       content_draft: {
         title: string
@@ -441,6 +444,9 @@ export async function runContentDecision(input: ContentDecisionInput): Promise<{
   const problemObject = classifierResponse.output as ProblemObject
   const scoreObject = problemScoreResponse.output as ScoreObject
   const betObject = decisionResponse.output as BetObject
+  const sourceDiagnostics = (
+    normalizerResponse.output as { source?: { diagnostics?: RedditSourceDiagnostics } }
+  ).source?.diagnostics
   const decision = resolveDecision(betObject)
   const reason = buildReason(betObject)
   const confidence = scoreObject.confidence
@@ -453,7 +459,8 @@ export async function runContentDecision(input: ContentDecisionInput): Promise<{
         decision: "skip",
         reason,
         confidence,
-        problem_summary: problemSummary
+        problem_summary: problemSummary,
+        source_diagnostics: sourceDiagnostics
       }
     }
   }
@@ -490,6 +497,7 @@ export async function runContentDecision(input: ContentDecisionInput): Promise<{
       reason,
       confidence,
       problem_summary: problemSummary,
+      source_diagnostics: sourceDiagnostics,
       content_asset: contentAsset,
       content_draft: draft
     }

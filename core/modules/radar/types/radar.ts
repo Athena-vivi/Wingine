@@ -30,6 +30,27 @@ export interface RedditComment {
   body: string
 }
 
+export interface RedditSourceDiagnostics {
+  original_url?: string
+  resolved_url?: string
+  url_type?: "canonical" | "share" | "app_link"
+  redirect_count?: number
+  final_status?: number
+  resolved_post_id?: string | null
+  normalized_url: string
+  raw_json_available: boolean
+  post_title: string
+  post_selftext_length: number
+  comments_count: number
+  first_3_comment_snippets: string[]
+  share_url_detected?: boolean
+  canonical_url_changed?: boolean
+  canonical_resolution_failed?: boolean
+  raw_comment_children_count?: number
+  more_placeholder_count?: number
+  fetch_error?: string
+}
+
 export interface RedditPostData {
   url: string
   title: string
@@ -37,6 +58,7 @@ export interface RedditPostData {
   subreddit: string
   score: number
   comments: RedditComment[]
+  diagnostics?: RedditSourceDiagnostics
 }
 
 export interface AnalyzeRequestBody {

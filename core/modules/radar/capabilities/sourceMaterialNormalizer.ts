@@ -1,5 +1,5 @@
 import { buildManualSource } from "./manualSourceBuilder.ts"
-import { fetchRedditSource } from "./redditSourceFetcher.ts"
+import { buildRedditDiagnosticsFromInput, fetchRedditSource } from "./redditSourceFetcher.ts"
 import type { AnalyzeRequestBody, RadarCapabilityDefinition, RedditPostData, SourceMode } from "../types/radar.ts"
 
 export const sourceMaterialNormalizerCapability: RadarCapabilityDefinition = {
@@ -41,9 +41,19 @@ export async function resolveSourceMaterial({
         source: await fetchRedditSource(normalizedInput.redditUrl),
         sourceMode
       }
-    } catch {
+    } catch (error) {
+      const source = buildManualSource(normalizedInput)
+
+      source.diagnostics = {
+        ...source.diagnostics,
+        ...buildRedditDiagnosticsFromInput(
+          normalizedInput.redditUrl,
+          error instanceof Error ? error.message : String(error)
+        )
+      }
+
       return {
-        source: buildManualSource(normalizedInput),
+        source,
         sourceMode: "manual"
       }
     }

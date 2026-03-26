@@ -43,7 +43,15 @@ export function buildManualSource(input: AnalyzeRequestBody): RedditPostData {
     selftext: input.postText?.trim() || "",
     subreddit: "manual",
     score: 0,
-    comments: commentList
+    comments: commentList,
+    diagnostics: {
+      normalized_url: input.redditUrl?.trim() || "manual://local-entry",
+      raw_json_available: false,
+      post_title: "Manual Reddit Input",
+      post_selftext_length: (input.postText?.trim() || "").length,
+      comments_count: commentList.length,
+      first_3_comment_snippets: commentList.slice(0, 3).map((item) => item.body.slice(0, 160))
+    }
   }
 }
 
