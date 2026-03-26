@@ -1,4 +1,4 @@
-import type { ExecutionResult } from "./executionProtocol.ts"
+import type { ExecutionResult } from "../execution/executionProtocol.ts"
 import type { FeedbackRecord } from "./decisionFeedbackRecorder.ts"
 
 export type OutcomeAdapterInput = {

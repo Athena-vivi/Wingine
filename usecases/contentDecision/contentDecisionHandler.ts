@@ -20,6 +20,11 @@ type ContentDecisionInput = {
   source_url: string
 }
 
+export type ContentDecisionHandlerInput = {
+  source_url: string
+  mode?: "auto" | "direct" | string
+}
+
 type SourceNormalizerInput = {
   sourceMode: "reddit" | "manual"
   normalizedInput: {
@@ -285,7 +290,7 @@ export async function runContentDecision(input: ContentDecisionInput): Promise<{
       role: "runtime",
       id: "content-decision-handler"
     },
-    input,
+    input: input as unknown as Record<string, unknown>,
     meta: {
       timestamp: new Date().toISOString()
     }
@@ -301,7 +306,7 @@ export async function runContentDecision(input: ContentDecisionInput): Promise<{
       role: "runtime",
       id: "content-decision-handler"
     },
-    input: resolverResponse.output as SourceNormalizerInput,
+    input: resolverResponse.output as unknown as Record<string, unknown>,
     meta: {
       timestamp: new Date().toISOString()
     }
@@ -322,7 +327,7 @@ export async function runContentDecision(input: ContentDecisionInput): Promise<{
       notes: (
         (resolverResponse.output as SourceNormalizerInput).normalizedInput.notes ?? ""
       )
-    },
+    } as Record<string, unknown>,
     meta: {
       timestamp: new Date().toISOString()
     }
@@ -362,7 +367,7 @@ export async function runContentDecision(input: ContentDecisionInput): Promise<{
       role: "runtime",
       id: "content-decision-handler"
     },
-    input: radarRecord,
+    input: radarRecord as unknown as Record<string, unknown>,
     meta: {
       timestamp: new Date().toISOString()
     }
@@ -380,7 +385,7 @@ export async function runContentDecision(input: ContentDecisionInput): Promise<{
     },
     input: {
       problem: problemResponse.output as ProblemObject
-    },
+    } as Record<string, unknown>,
     meta: {
       timestamp: new Date().toISOString()
     }
@@ -398,7 +403,7 @@ export async function runContentDecision(input: ContentDecisionInput): Promise<{
     },
     input: {
       problem: classifierResponse.output as ProblemObject
-    },
+    } as Record<string, unknown>,
     meta: {
       timestamp: new Date().toISOString()
     }
@@ -416,7 +421,7 @@ export async function runContentDecision(input: ContentDecisionInput): Promise<{
     },
     input: {
       score: problemScoreResponse.output as ScoreObject
-    },
+    } as Record<string, unknown>,
     meta: {
       timestamp: new Date().toISOString()
     }
@@ -452,7 +457,7 @@ export async function runContentDecision(input: ContentDecisionInput): Promise<{
       role: "runtime",
       id: "content-decision-handler"
     },
-    input: problemObject,
+    input: problemObject as unknown as Record<string, unknown>,
     meta: {
       timestamp: new Date().toISOString()
     }
@@ -478,6 +483,14 @@ export async function runContentDecision(input: ContentDecisionInput): Promise<{
       content_draft: draft
     }
   }
+}
+
+export async function contentDecisionHandler(input: ContentDecisionHandlerInput): Promise<ContentDecisionResult> {
+  const result = await runContentDecision({
+    source_url: input.source_url
+  })
+
+  return result.response
 }
 
 

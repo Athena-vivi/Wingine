@@ -1,4 +1,4 @@
-import type { ScoreObject } from "../shared/index.ts"
+import type { ScoreObject } from "../modules/shared/index.ts"
 
 type SystemSpec = {
   type: "system_spec"

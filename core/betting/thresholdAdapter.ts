@@ -1,4 +1,4 @@
-import type { DecisionFeedbackRecord } from "./decisionFeedbackRecorder.ts"
+import type { DecisionFeedbackRecord } from "../feedback/decisionFeedbackRecorder.ts"
 
 export type ThresholdAdapterInput = {
   type: string

@@ -1,4 +1,4 @@
-import type { ProblemObject } from "../shared/index.ts"
+import type { ProblemObject } from "./shared/index.ts"
 
 type StoredProblemRecord = {
   storage_ref: string

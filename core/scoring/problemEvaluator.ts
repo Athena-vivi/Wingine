@@ -1,4 +1,4 @@
-import type { ProblemObject, ScoreObject } from "../shared/index.ts"
+import type { ProblemObject, ScoreObject } from "../modules/shared/index.ts"
 
 export type ProblemEvaluatorInput = {
   problem: ProblemObject

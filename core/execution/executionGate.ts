@@ -1,5 +1,5 @@
-import { generateContentDraft, type ContentDraft } from "./contentDraftGenerator.ts"
-import type { BetObject, ProblemObject } from "../shared/index.ts"
+import { generateContentDraft, type ContentDraft } from "../modules/contentDraftGenerator.ts"
+import type { BetObject, ProblemObject } from "../modules/shared/index.ts"
 
 export type ExecutionGateInput = {
   problem: ProblemObject

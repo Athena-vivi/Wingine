@@ -68,7 +68,7 @@ export async function fetchRedditSource(redditUrl: string): Promise<RedditPostDa
       "User-Agent": "reddit-insight-desk/1.0"
     },
     next: { revalidate: 0 }
-  })
+  } as RequestInit & { next?: { revalidate: number } })
 
   if (!response.ok) {
     throw new Error(`Failed to load Reddit post: ${response.status}`)

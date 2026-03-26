@@ -1,4 +1,4 @@
-import type { BetObject, ScoreObject } from "../shared/index.ts"
+import type { BetObject, ScoreObject } from "../modules/shared/index.ts"
 
 export type DecisionInput = {
   score: ScoreObject
