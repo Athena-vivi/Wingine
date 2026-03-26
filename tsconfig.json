@@ -35,10 +35,6 @@
     "core/feedback/**/*.ts",
     "core/modules/content/**/*.ts",
     "core/modules/shared/**/*.ts",
-    "core/modules/radar/adapters/**/*.ts",
-    "core/modules/radar/capabilities/**/*.ts",
-    "core/modules/radar/lib/**/*.ts",
-    "core/modules/radar/types/**/*.ts",
     "usecases/**/*.ts",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
