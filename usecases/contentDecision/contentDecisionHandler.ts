@@ -10,20 +10,21 @@ import { runContentExecutor } from "../../core/execution/contentExecutor.ts"
 import type { ExecutionRequest } from "../../core/execution/executionProtocol.ts"
 import { buildContentAsset, type ContentAsset } from "../../core/modules/content/contentAssetBuilder.ts"
 import { exportProblemObjectFromRadarRecord } from "../../core/modules/radar/adapters/problemExportAdapter.ts"
+import type { ProblemAnalysisLLMConfig, ProblemAnalysisModelProvider } from "../../core/modules/radar/capabilities/problemAnalysisEngine.ts"
 import { runProblemAnalysis } from "../../core/modules/radar/capabilities/problemAnalysisEngine.ts"
 import { buildRadarRecord } from "../../core/modules/radar/capabilities/radarRecordBuilder.ts"
 import { resolveSourceInput } from "../../core/modules/radar/capabilities/sourceInputResolver.ts"
 import { resolveSourceMaterial } from "../../core/modules/radar/capabilities/sourceMaterialNormalizer.ts"
 import type { BetObject, ProblemObject, ScoreObject } from "../../core/modules/shared/index.ts"
 
-type ContentDecisionInput = {
-  source_url: string
-}
-
 export type ContentDecisionHandlerInput = {
   source_url: string
   mode?: "auto" | "direct" | string
+  model_provider?: ProblemAnalysisModelProvider
+  model?: string
 }
+
+type ContentDecisionInput = ContentDecisionHandlerInput
 
 type SourceNormalizerInput = {
   sourceMode: "reddit" | "manual"
@@ -101,7 +102,7 @@ function adaptResolverInput(input: ContentDecisionInput) {
   }
 }
 
-function createRuntimeForContentDecision() {
+function createRuntimeForContentDecision(inputConfig?: ContentDecisionHandlerInput) {
   const registry = createModuleRegistry()
   const activityLogStore = createActivityLogStore()
   const dispatcher = createProtocolDispatcher({
@@ -156,7 +157,17 @@ function createRuntimeForContentDecision() {
     execution: {
       mode: "local",
       target: "core/modules/radar/capabilities/problemAnalysisEngine.runProblemAnalysis",
-      handler: runProblemAnalysis
+      handler: (input) =>
+        runProblemAnalysis({
+          ...(input as {
+            source: ProblemExtractorInput["source"]
+            notes: string
+          }),
+          llm: {
+            provider: inputConfig?.model_provider,
+            model: inputConfig?.model
+          } satisfies ProblemAnalysisLLMConfig
+        })
     }
   })
 
@@ -278,7 +289,7 @@ export async function runContentDecision(input: ContentDecisionInput): Promise<{
   input: ContentDecisionInput
   response: ContentDecisionResult
 }> {
-  const { dispatcher } = createRuntimeForContentDecision()
+  const { dispatcher } = createRuntimeForContentDecision(input as ContentDecisionHandlerInput)
 
   const resolverResponse = await dispatcher.dispatch({
     protocol_version: "0.1.0",
@@ -487,7 +498,10 @@ export async function runContentDecision(input: ContentDecisionInput): Promise<{
 
 export async function contentDecisionHandler(input: ContentDecisionHandlerInput): Promise<ContentDecisionResult> {
   const result = await runContentDecision({
-    source_url: input.source_url
+    source_url: input.source_url,
+    mode: input.mode,
+    model_provider: input.model_provider,
+    model: input.model
   })
 
   return result.response

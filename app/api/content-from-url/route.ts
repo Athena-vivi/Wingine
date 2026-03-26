@@ -2,7 +2,7 @@ import { contentDecisionHandler } from "../../../usecases/contentDecision/conten
 
 export async function POST(req: Request) {
   try {
-    const { source_url, channel = "xiaohongshu", mode = "auto" } = await req.json()
+    const { source_url, channel = "xiaohongshu", mode = "auto", model_provider = "glm", model } = await req.json()
 
     if (!source_url) {
       return Response.json({ error: "source_url is required" }, { status: 400 })
@@ -10,7 +10,9 @@ export async function POST(req: Request) {
 
     const result = await contentDecisionHandler({
       source_url,
-      mode
+      mode,
+      model_provider,
+      model
     })
 
     if (result.decision !== "invest" && mode !== "direct") {
@@ -29,6 +31,10 @@ export async function POST(req: Request) {
       decision: result.decision,
       reason: result.reason,
       confidence: result.confidence,
+      model_used: {
+        provider: model_provider,
+        model: model || null
+      },
       content
     })
   } catch (err) {

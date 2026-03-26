@@ -2,16 +2,52 @@ import OpenAI from "openai"
 
 import type { AnalyzeResponse, RadarCapabilityDefinition, RedditPostData } from "../types/radar.ts"
 
-const aiProvider = process.env.OPENROUTER_API_KEY
-  ? "openrouter"
-  : process.env.OPENAI_API_KEY
-    ? "openai"
-    : null
+export type ProblemAnalysisModelProvider = "openrouter" | "openai" | "glm" | "none"
 
-const openai =
-  aiProvider === "openrouter"
-    ? new OpenAI({
-        apiKey: process.env.OPENROUTER_API_KEY,
+export type ProblemAnalysisLLMConfig = {
+  provider?: ProblemAnalysisModelProvider
+  model?: string
+}
+
+type ResolvedLLMRuntime = {
+  provider: Exclude<ProblemAnalysisModelProvider, "none"> | null
+  model: string | null
+  client: OpenAI | null
+}
+
+function resolveDefaultProvider(): Exclude<ProblemAnalysisModelProvider, "none"> | null {
+  if (process.env.GLM_API_KEY || process.env.ZAI_API_KEY) return "glm"
+  if (process.env.OPENROUTER_API_KEY) return "openrouter"
+  if (process.env.OPENAI_API_KEY) return "openai"
+  return null
+}
+
+function resolveLLMRuntime(selection?: ProblemAnalysisLLMConfig): ResolvedLLMRuntime {
+  const provider = selection?.provider === "none"
+    ? null
+    : selection?.provider
+      ? selection.provider
+      : resolveDefaultProvider()
+
+  if (!provider) {
+    return {
+      provider: null,
+      model: null,
+      client: null
+    }
+  }
+
+  if (provider === "openrouter") {
+    const apiKey = process.env.OPENROUTER_API_KEY
+    if (!apiKey) {
+      return { provider: null, model: null, client: null }
+    }
+
+    return {
+      provider,
+      model: selection?.model || process.env.OPENROUTER_MODEL || "openai/gpt-4.1-mini",
+      client: new OpenAI({
+        apiKey,
         baseURL: process.env.OPENROUTER_BASE_URL || "https://openrouter.ai/api/v1",
         defaultHeaders: {
           ...(process.env.OPENROUTER_SITE_URL
@@ -26,14 +62,36 @@ const openai =
             : {})
         }
       })
-    : aiProvider === "openai"
-      ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
-      : null
+    }
+  }
 
-const model =
-  aiProvider === "openrouter"
-    ? process.env.OPENROUTER_MODEL || "openai/gpt-4.1-mini"
-    : process.env.OPENAI_MODEL || "gpt-4.1-mini"
+  if (provider === "glm") {
+    const apiKey = process.env.GLM_API_KEY || process.env.ZAI_API_KEY
+    if (!apiKey) {
+      return { provider: null, model: null, client: null }
+    }
+
+    return {
+      provider,
+      model: selection?.model || process.env.GLM_MODEL || process.env.ZAI_MODEL || "glm-4.5-air",
+      client: new OpenAI({
+        apiKey,
+        baseURL: process.env.GLM_BASE_URL || process.env.ZAI_BASE_URL || "https://open.bigmodel.cn/api/paas/v4/"
+      })
+    }
+  }
+
+  const apiKey = process.env.OPENAI_API_KEY
+  if (!apiKey) {
+    return { provider: null, model: null, client: null }
+  }
+
+  return {
+    provider: "openai",
+    model: selection?.model || process.env.OPENAI_MODEL || "gpt-4.1-mini",
+    client: new OpenAI({ apiKey })
+  }
+}
 
 function summarizeComments(source: RedditPostData) {
   if (source.comments.length === 0) {
@@ -68,13 +126,15 @@ function heuristicBusinessStage(text: string) {
   return "Discovery"
 }
 
-async function createJsonCompletion<T>(prompt: string): Promise<T | null> {
-  if (!openai) {
+async function createJsonCompletion<T>(prompt: string, selection?: ProblemAnalysisLLMConfig): Promise<T | null> {
+  const runtime = resolveLLMRuntime(selection)
+
+  if (!runtime.client || !runtime.model) {
     return null
   }
 
-  const response = await openai.chat.completions.create({
-    model,
+  const response = await runtime.client.chat.completions.create({
+    model: runtime.model,
     messages: [
       {
         role: "system",
@@ -162,10 +222,12 @@ export function buildFallbackAnalysis(source: RedditPostData, notes: string) {
 
 export async function runProblemAnalysis({
   source,
-  notes
+  notes,
+  llm
 }: {
   source: RedditPostData
   notes: string
+  llm?: ProblemAnalysisLLMConfig
 }): Promise<{
   analysis: Pick<AnalyzeResponse, "postSummary" | "commentThemes" | "sellerProblem" | "industrySignal" | "recordWorthy" | "reason">
   fallback: ReturnType<typeof buildFallbackAnalysis>
@@ -192,7 +254,7 @@ ${notes || "(empty)"}
 Write concise business-ready English. Keep booleans as true/false.
 `
 
-  const completion = await createJsonCompletion<Pick<AnalyzeResponse, "postSummary" | "commentThemes" | "sellerProblem" | "industrySignal" | "recordWorthy" | "reason">>(prompt).catch(() => null)
+  const completion = await createJsonCompletion<Pick<AnalyzeResponse, "postSummary" | "commentThemes" | "sellerProblem" | "industrySignal" | "recordWorthy" | "reason">>(prompt, llm).catch(() => null)
 
   return {
     analysis: completion ?? {

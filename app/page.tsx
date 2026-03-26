@@ -5,6 +5,8 @@ import { useState } from "react"
 export default function Home() {
   const [url, setUrl] = useState("")
   const [channel, setChannel] = useState("xiaohongshu")
+  const [modelProvider, setModelProvider] = useState("glm")
+  const [model, setModel] = useState("glm-4.5-air")
   const [result, setResult] = useState<any>(null)
 
   async function handleSubmit() {
@@ -16,7 +18,9 @@ export default function Home() {
       body: JSON.stringify({
         source_url: url,
         channel,
-        mode: "auto"
+        mode: "auto",
+        model_provider: modelProvider,
+        model
       })
     })
 
@@ -40,6 +44,24 @@ export default function Home() {
         <option value="twitter">Twitter</option>
         <option value="substack">Substack</option>
       </select>
+
+      <select
+        value={modelProvider}
+        onChange={(e) => setModelProvider(e.target.value)}
+        style={{ display: "block", marginTop: 10 }}
+      >
+        <option value="glm">GLM</option>
+        <option value="openai">OpenAI</option>
+        <option value="openrouter">OpenRouter</option>
+        <option value="none">No Model</option>
+      </select>
+
+      <input
+        placeholder="Model name"
+        value={model}
+        onChange={(e) => setModel(e.target.value)}
+        style={{ width: "100%", marginTop: 10 }}
+      />
 
       <button onClick={handleSubmit} style={{ display: "block", marginTop: 10 }}>
         Generate
