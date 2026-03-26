@@ -1,43 +1,11 @@
-# VisualClause Console
+Wingine
 
-Unified system shell for:
-- Radar
-- Builder
-- Scoring
-- Betting
+Wingine is a problem-driven decision and execution system.
 
-## Purpose
-- unified navigation
-- unified entry
-- unified object viewing
-- unified overview
-- cross-module routing
+Input: real-world problems
+Output: decisions + executable actions
 
-## Boundary
-- no business logic
-- no workflow editing
-- no scoring logic
-- no betting logic
-- no radar analysis
+Core Loop:
+Problem -> Score -> Decision -> Execution -> Feedback
 
-## Current MVP
-- `/overview`
-- `/objects`
-- `/radar`
-- `/builder`
-- `/scoring`
-- `/betting`
-- `/flows`
-- `/trace`
-- `/activity`
-- `/invoke`
-- `/registry`
-
-## Registry Connectors
-- Console prefers live registry endpoints when configured
-- Console falls back to local manifests when endpoints are unavailable
-- Optional env vars:
-  - `VISUALCLAUSE_RADAR_REGISTRY_URL`
-  - `VISUALCLAUSE_BUILDER_REGISTRY_URL`
-  - `VISUALCLAUSE_SCORING_REGISTRY_URL`
-  - `VISUALCLAUSE_BETTING_REGISTRY_URL`
+Status: v0.1 -- core engine only
