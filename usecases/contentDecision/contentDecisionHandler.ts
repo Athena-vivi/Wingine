@@ -8,6 +8,7 @@ import { evaluateProblem, type ProblemEvaluatorInput } from "../../core/scoring/
 import { resolveProblemDecision, type ProblemDecisionInput } from "../../core/betting/problemDecisionResolver.ts"
 import { runContentExecutor } from "../../core/execution/contentExecutor.ts"
 import type { ExecutionRequest } from "../../core/execution/executionProtocol.ts"
+import { buildContentAsset, type ContentAsset } from "../../core/modules/content/contentAssetBuilder.ts"
 import { exportProblemObjectFromRadarRecord } from "../../core/modules/radar/adapters/problemExportAdapter.ts"
 import { runProblemAnalysis } from "../../core/modules/radar/capabilities/problemAnalysisEngine.ts"
 import { buildRadarRecord } from "../../core/modules/radar/capabilities/radarRecordBuilder.ts"
@@ -60,6 +61,7 @@ export type ContentDecisionResult =
       reason: string
       confidence: number
       problem_summary: string
+      content_asset: ContentAsset
       content_draft: {
         title: string
         summary: string
@@ -206,6 +208,23 @@ function createRuntimeForContentDecision() {
 
   registry.register({
     module: {
+      module_id: "builder.content_asset_builder",
+      system: "builder",
+      actions: ["build"],
+      input_contract: "problem_object",
+      output_contract: "content_asset",
+      module_version: "0.1.0",
+      status: "active"
+    },
+    execution: {
+      mode: "local",
+      target: "core/modules/content/contentAssetBuilder.ts.buildContentAsset",
+      handler: (input) => buildContentAsset(input as ProblemObject)
+    }
+  })
+
+  registry.register({
+    module: {
       module_id: "betting.problem_decision_resolver",
       system: "betting",
       actions: ["resolve"],
@@ -235,13 +254,13 @@ function buildReason(bet: BetObject) {
   return String(bet.reason ?? "decision generated")
 }
 
-function buildContentExecutionRequest(problem: ProblemObject, bet: BetObject): ExecutionRequest {
+function buildContentExecutionRequest(problem: ProblemObject, bet: BetObject, asset: ContentAsset): ExecutionRequest {
   return {
     execution_type: "content",
     payload: {
-      title: problem.title,
-      summary: problem.summary,
-      body: `Problem: ${problem.normalized_problem}. Source: ${problem.source.system}. Context: ${String(
+      title: asset.topic || problem.title,
+      summary: asset.angle || problem.summary,
+      body: `${asset.core_claim} Outline: ${asset.outline.join(" -> ")}. Source: ${problem.source.system}. Context: ${String(
         problem.metadata.custom.type ?? "general"
       )}.`
     },
@@ -423,7 +442,25 @@ export async function runContentDecision(input: ContentDecisionInput): Promise<{
     }
   }
 
-  const executionResult = runContentExecutor(buildContentExecutionRequest(problemObject, betObject))
+  const contentAssetResponse = await dispatcher.dispatch({
+    protocol_version: "0.1.0",
+    request_id: `content-decision-asset-${input.source_url}`,
+    module: "builder.content_asset_builder",
+    action: "build",
+    caller: {
+      system: "runtime_demo",
+      role: "runtime",
+      id: "content-decision-handler"
+    },
+    input: problemObject,
+    meta: {
+      timestamp: new Date().toISOString()
+    }
+  })
+
+  const contentAsset = contentAssetResponse.output as ContentAsset
+
+  const executionResult = runContentExecutor(buildContentExecutionRequest(problemObject, betObject, contentAsset))
   const draft = executionResult.output.draft as {
     title: string
     summary: string
@@ -437,6 +474,7 @@ export async function runContentDecision(input: ContentDecisionInput): Promise<{
       reason,
       confidence,
       problem_summary: problemSummary,
+      content_asset: contentAsset,
       content_draft: draft
     }
   }
