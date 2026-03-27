@@ -13,6 +13,14 @@ export function assemblePostToChannelContentResponse(
           title: result.channel_content.title,
           body: result.channel_content.body
         }
-      : null
+      : null,
+    metadata: result.metadata
+      ? {
+          build_decision: result.metadata.build_decision,
+          feedback_input: {
+            build_decision: result.metadata.feedback_input.build_decision
+          }
+        }
+      : undefined
   }
 }

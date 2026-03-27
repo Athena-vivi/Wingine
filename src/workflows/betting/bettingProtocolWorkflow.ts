@@ -17,7 +17,7 @@ import type {
   BettingRecord,
   ResourceAllocation
 } from "../../modules/capability/decision/betting_module/types/betting.ts"
-import type { BettingWorkspaceState } from "../../modules/capability/decision/betting_module/protocol/bettingProtocol.ts"
+import type { BettingWorkspaceState } from "../../contracts/index.ts"
 
 type CreateRequest = <TPayload>(
   capability: string,

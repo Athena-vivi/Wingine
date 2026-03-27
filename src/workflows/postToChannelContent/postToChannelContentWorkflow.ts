@@ -1,8 +1,10 @@
+import { decideBuild } from "../../modules/capability/decision/buildDecision.ts"
 import { decideProblem } from "../../modules/capability/decision/problemDecision.ts"
 import { runContentExecutor } from "../../modules/capability/execution/contentExecutor.ts"
 import { build } from "../../modules/system/builder/build.ts"
 import type { ProblemObject } from "../../modules/capability/shared/index.ts"
 import { resolvePostDecisionReason } from "../../control/policy/postToChannelPolicy.ts"
+import type { BettingInput } from "../../modules/capability/decision/betting_module/types/betting.ts"
 import type {
   PostToChannelContentInput,
   PostToChannelContentResult
@@ -13,6 +15,50 @@ function normalizeComments(comments: string) {
     .split(/\r?\n+/)
     .map((item) => item.trim())
     .filter(Boolean)
+}
+
+function createBuildDecisionRequest<TPayload>(
+  capability: string,
+  payload: TPayload,
+  context: {
+    objectId?: string
+    objectType?: "problem" | "module" | "output" | "workflow"
+  }
+) {
+  return {
+    request_id: `${capability}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    capability,
+    caller: {
+      type: "api" as const,
+      id: "post-to-channel-content-workflow"
+    },
+    payload,
+    context
+  }
+}
+
+function createBuildDecisionInput(input: {
+  contentAsset: {
+    topic: string
+    angle: string
+    core_claim: string
+    outline: string[]
+  }
+  confidence: number
+  hasComments: boolean
+}): BettingInput {
+  const completenessScore =
+    (input.contentAsset.topic ? 1.25 : 0) +
+    (input.contentAsset.angle ? 1.25 : 0) +
+    (input.contentAsset.core_claim ? 1.25 : 0) +
+    Math.min(1.25, input.contentAsset.outline.length * 0.3)
+
+  return {
+    score: Number(Math.min(5, completenessScore).toFixed(2)),
+    confidence: Number(Math.max(0, Math.min(1, input.confidence)).toFixed(3)),
+    trend: input.hasComments ? "up" : "flat",
+    cost: 1
+  }
 }
 
 function buildChannelBody(input: {
@@ -75,6 +121,20 @@ export async function runPostToChannelContentWorkflow(input: {
     mode: "content",
     problem: classifiedProblem
   })
+  const buildDecision = decideBuild({
+    createRequest: createBuildDecisionRequest,
+    requestContext: {
+      objectId: classifiedProblem.id,
+      objectType: "output"
+    },
+    buildResult: {
+      input: createBuildDecisionInput({
+        contentAsset,
+        confidence,
+        hasComments: Boolean(input.request.comments?.trim())
+      })
+    }
+  })
   const commentLines = normalizeComments(input.request.comments ?? "")
   const executionResult = runContentExecutor({
     execution_type: "content",
@@ -108,6 +168,12 @@ export async function runPostToChannelContentWorkflow(input: {
       channel: input.request.channel,
       title: draft.title,
       body: draft.body
+    },
+    metadata: {
+      build_decision: buildDecision.status === "success" ? buildDecision.data : null,
+      feedback_input: {
+        build_decision: buildDecision.status === "success" ? buildDecision.data : null
+      }
     }
   }
 }

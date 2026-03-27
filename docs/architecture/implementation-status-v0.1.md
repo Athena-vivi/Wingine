@@ -21,6 +21,7 @@ For architecture freeze truth, use:
 - control logic is extracted into `src/control`
 - protocol-facing shells are extracted into `src/protocols`
 - contract single-source entry is established under `src/contracts`
+- build-level decision hook is attached after build on the real post-to-channel path
 
 ## Current Converged Areas
 
@@ -29,24 +30,28 @@ For architecture freeze truth, use:
 - builder external interface
 - usecase / boundary input-output contracts for the main exposed path
 - runtime / execution / flow / protocol base contracts
+- scoring cross-layer workspace state / payload contracts
+- betting cross-layer workspace state / payload contracts
+- build-level decision metadata / feedback-input attachment on the main exposed path
 
 ## Current Residual Structural Debt
 
 ### Must Fix Next
 
-- protocol dispatch shells under `src/protocols/*Dispatch.ts`
-- builder runtime state store under `src/modules/system/builder/builder/protocol/builderStateStore.ts`
+- validate build-level decision signal quality before any gate behavior is introduced
 
 ### Accept for Now
 
-- domain-local workspace payload/state definitions
+- builder-local workspace payload/state definitions
+- remaining cross-layer workspace shapes
+- converged scoring/betting workspace shapes
 - builder internal draft/state shapes
 - thin execution result wrappers
 - protocol handler integration shells
 
 ## Current Single Next Priority
 
-`Separate protocol dispatch wiring from protocol integration state and binding logic, starting with builder protocol dispatch.`
+`Freeze build-level decision as metadata/feedback-only signal and validate it across more real runs before considering any gate behavior.`
 
 ## Build Validation
 

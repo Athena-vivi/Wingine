@@ -45,6 +45,7 @@
     "src/modules/capability/shared/**/*.ts",
     "src/contracts/**/*.ts",
     "src/control/**/*.ts",
+    "src/execution/**/*.ts",
     "src/protocols/**/*.ts",
     "src/workflows/**/*.ts",
     "usecases/**/*.ts",
