@@ -1,37 +1,42 @@
 # System State Freeze v0.1
 
-## 1. Current Confirmed Chain
+## Status Note
 
-Problem -> Type -> Problem Score -> Problem Decision -> Builder -> SystemSpec -> System Score -> System Decision -> Decision Feedback
+This file is retained as a historical checkpoint only.
 
-## 2. Confirmed Capabilities
+It no longer represents the latest architecture state.
 
-- Runtime single-dispatch execution
-- Radar minimum chain
-- Builder structural path
-- Problem gating
-- System scoring
-- Decision divergence
-- Decision feedback recording
+The current authoritative freeze documents are:
 
-## 3. Current Limitations
+- `docs/protocols/system-core-protocol-v1.md`
+- `docs/meta/system-architecture-freeze-v0.2.md`
+- `docs/meta/structural-debt-classification-v0.2.md`
 
-- scoring is still minimal and rule-based
-- betting is still threshold-based
-- feedback is recorded but not yet fed back into behavior
-- structural divergence is minimal
-- capability path and structural path still coexist with partial semantic compression
+## Historical Snapshot
 
-## 4. What Is Not Yet Implemented
+The v0.1 chain that was originally frozen here was:
 
-- feedback-driven adaptation
-- advanced scoring
-- advanced betting / resource allocation
-- mature structural builder
-- orchestration layer
+`Problem -> Type -> Problem Score -> Problem Decision -> Builder -> SystemSpec -> System Score -> System Decision -> Decision Feedback`
 
-## 5. Next Possible Directions
+This is no longer the accepted system skeleton.
 
-- feedback loop evolution
-- scoring system expansion
-- builder structural expansion
+## Current Accepted Skeleton
+
+The current frozen main chain is:
+
+`Problem -> Build -> Output -> Feedback`
+
+Decision is now treated as horizontal capability:
+
+- `Decision(Problem)`
+- `Decision(Build)`
+
+Build is now treated as the single external structure-generation entry:
+
+- `build(...)`
+
+## Why This File Still Exists
+
+This file preserves the earlier architecture state for comparison.
+
+It should not be used as the active implementation baseline.
