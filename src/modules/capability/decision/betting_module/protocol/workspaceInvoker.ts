@@ -14,7 +14,7 @@ import type {
   ProtocolResponse
 } from "../types/protocol.ts"
 import type { ScoreImportPayload } from "../types/protocol.ts"
-import type { BettingWorkspaceState } from "./bettingProtocol.ts"
+import type { BettingWorkspaceState } from "../types/protocol.ts"
 
 type CompositeResponse = ProtocolResponse<BettingWorkspaceState | Record<string, unknown>>
 

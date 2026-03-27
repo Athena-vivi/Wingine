@@ -17,4 +17,22 @@ export type PostToChannelContentResult = {
     title: string
     body: string
   } | null
+  metadata?: {
+    build_decision: {
+      score: number
+      strategy?: string
+      role?: string
+      confidence?: number
+      metadata?: Record<string, unknown>
+    } | null
+    feedback_input: {
+      build_decision: {
+        score: number
+        strategy?: string
+        role?: string
+        confidence?: number
+        metadata?: Record<string, unknown>
+      } | null
+    }
+  }
 }

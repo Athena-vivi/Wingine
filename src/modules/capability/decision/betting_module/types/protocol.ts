@@ -1,5 +1,9 @@
 import type { BetObject, FlowRequest, FlowResponse, ScoreObject } from "../../../../../contracts/index.ts"
 import type {
+  BetEvaluatePayload,
+  BetPersistPayload,
+  BettingWorkspaceState,
+  CandidateLoadPayload,
   CapabilityDefinition as BaseCapabilityDefinition,
   CapabilityCallerType,
   ProtocolCaller as BaseProtocolCaller,
@@ -7,6 +11,12 @@ import type {
   ProtocolResponse as BaseProtocolResponse
 } from "../../../../../contracts/index.ts"
 import type { BettingCandidate, BettingInput, BettingObjectType, BettingRecord, ResourceAllocation, TrendValue } from "./betting.ts"
+export type {
+  BetEvaluatePayload,
+  BetPersistPayload,
+  BettingWorkspaceState,
+  CandidateLoadPayload
+} from "../../../../../contracts/index.ts"
 
 export type CapabilityState =
   | "idle"
@@ -37,29 +47,6 @@ export type ProtocolResponse<TData = Record<string, unknown>> = BaseProtocolResp
   TData,
   CapabilityState
 >
-
-export type BettingWorkspaceState = {
-  selectedCandidateId: string
-  candidates: BettingCandidate[]
-  currentCandidate: BettingCandidate
-  currentInput: BettingInput
-  currentRecord: BettingRecord | null
-  history: BettingRecord[]
-}
-
-export type CandidateLoadPayload = {
-  candidateId: string
-}
-
-export type BetEvaluatePayload = {
-  candidateId: string
-  input: BettingInput
-}
-
-export type BetPersistPayload = {
-  candidateId: string
-  record: BettingRecord
-}
 
 export type BettingCompositeProtocol =
   | "candidate_load"
