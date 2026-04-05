@@ -1,85 +1,60 @@
 # Implementation Status v0.1
 
+## Status Note
+
+This document is synchronized to the current repository state.
+
+For architecture freeze truth, use:
+
+- `docs/protocols/system-core-protocol-v1.md`
+- `docs/meta/system-architecture-freeze-v0.2.md`
+- `docs/meta/structural-debt-classification-v0.2.md`
+
 ## Current State
 
-- Phase A: completed
-- Phase B: completed
-- Phase C: completed
-- Phase D: completed
-- runtime foundation design: completed (frozen)
-- contracts layer converged
-- adapters layer converged
-- protocol types layer converged
-- remaining residuals are located in:
-  - runtime support layer
-  - registry route layer
-  - page-level residuals
+- layer-first structure is established under `src/`
+- main chain is reduced to `Problem -> Build -> Output -> Feedback`
+- Decision is extracted as horizontal capability
+- Build is converged to a single external entry
+- boundary is established for the main post-to-channel path
+- workflow progression is extracted into `src/workflows`
+- control logic is extracted into `src/control`
+- protocol-facing shells are extracted into `src/protocols`
+- contract single-source entry is established under `src/contracts`
+- build-level decision hook is attached after build on the real post-to-channel path
 
-## Decision
+## Current Converged Areas
 
-Boundary-level shared convergence is complete.
-Transition to Step 5 - Product Runtime Foundation.
+- boundary request / transform / response on the main exposed path
+- decision external interface
+- builder external interface
+- usecase / boundary input-output contracts for the main exposed path
+- runtime / execution / flow / protocol base contracts
+- scoring cross-layer workspace state / payload contracts
+- betting cross-layer workspace state / payload contracts
+- build-level decision metadata / feedback-input attachment on the main exposed path
 
-## Next Step
+## Current Residual Structural Debt
 
-### Focus
+### Must Fix Next
 
-- runtime foundation implementation (minimal)
+- validate build-level decision signal quality before any gate behavior is introduced
 
-### Scope
+### Accept for Now
 
-- module_registry (minimal)
-- protocol_dispatcher (minimal)
-- activity_log_store (minimal)
-- state_store (minimal)
-- health_surface (minimal)
+- builder-local workspace payload/state definitions
+- remaining cross-layer workspace shapes
+- converged scoring/betting workspace shapes
+- builder internal draft/state shapes
+- thin execution result wrappers
+- protocol handler integration shells
 
-### Constraints
+## Current Single Next Priority
 
-- follow runtime invariants strictly
-- no business logic allowed in runtime
-- no protocol redesign
-- no schema mutation
+`Freeze build-level decision as metadata/feedback-only signal and validate it across more real runs before considering any gate behavior.`
 
-## Known Structural Violations
+## Build Validation
 
-- Console currently contains internal flow dispatcher logic
-  - files:
-    - apps/console/connectors/invoke.ts
-    - apps/console/app/api/invoke/flow/route.ts
-- This violates Runtime boundary rules:
-  - Console MUST NOT implement dispatcher logic
-  - Console MUST use Runtime as the single invocation entry
-- Current status:
-  - accepted as temporary structure
-  - required for system operability before Runtime implementation
-- Resolution plan:
-  - will be removed after Runtime minimal loop is operational
+Current synchronized status:
 
-problem_structurer 当前基于现有 shared schema，临时通过 problemExportAdapter 产出 ProblemObject。该实现当前接受，不在本阶段拆分 structurer/exporter 边界。
-problem_structurer currently produces the shared ProblemObject through the existing export adapter path under the current schema.
-this is accepted as a temporary structural overlap in the current phase.
-no schema rename or structurer/exporter refactor is performed at this stage.
-
-Radar Phase 1 minimum chain is now complete.
-- source_input_resolver
-- source_normalizer
-- problem_extractor
-- problem_structurer
-- problem_store_adapter
-- problem_exporter
-source_fetcher is deferred for future real external source ingestion.
-problem_deduplicator is deferred for future problem quality and duplication control.
-current system_goal_resolver is implemented via builder workspace builder handler as a goal-equivalent output
-this is a temporary semantic compression and is not a pure goal resolver
-no refactor is performed in the current phase
-current system_goal_resolver is implemented via builder workspace handler as a goal-equivalent output
-current module_planner is implemented via capability attachment logic, producing capability-level modules instead of system structural modules
-current builder pipeline produces capability-oriented workflow instead of system structural workflow
-this is accepted for pipeline validation only
-semantic correction is deferred to next phase
-minimal type-based structural divergence is now established
-structural modules now vary by problem type
-current divergence is accepted as a temporary sequence implementation
-workflow_planner position may require later semantic correction
-no refactor is performed in current phase
+- `npm run build` passes
