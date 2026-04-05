@@ -27,6 +27,7 @@
   "include": [
     "app/**/*.ts",
     "app/**/*.tsx",
+    "global.d.ts",
     "api/**/*.ts",
     "src/modules/system/problem/**/*.ts",
     "src/modules/system/builder/build.ts",
@@ -47,6 +48,8 @@
     "src/control/**/*.ts",
     "src/execution/**/*.ts",
     "src/protocols/**/*.ts",
+    "src/system-builder/**/*.ts",
+    "src/system-builder/**/*.tsx",
     "src/workflows/**/*.ts",
     "usecases/**/*.ts",
     ".next/types/**/*.ts",
