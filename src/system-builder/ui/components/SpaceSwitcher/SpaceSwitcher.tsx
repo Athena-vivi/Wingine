@@ -1,7 +1,7 @@
 import type { ActiveSpace } from "../../../../system-builder/types.js"
 
 const spaces: Array<{ id: ActiveSpace | "capabilities"; label: string }> = [
-  { id: "problem-radar", label: "Problem Radar" },
+  { id: "problem-radar", label: "Breaker Space" },
   { id: "builder-space", label: "Builder Space" },
   { id: "capabilities", label: "Capability Registry" }
 ]
